@@ -1,0 +1,5 @@
+Sources of database files used:
+
+Jisho about page: https://jisho.org/about
+JMdict/EDICT files: http://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project#CURRENT_VERSION_.26_DOWNLOAD
+JLPT vocab: http://www.tanos.co.uk/jlpt/

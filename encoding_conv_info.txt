@@ -1,0 +1,7 @@
+To convert EUC-JP encoding to UTF-8, use one of the following:
+
+iconv -f EUC-JP -t UTF-8 input.txt > output.txt
+
+iconv -f EUC-JP -t UTF-8 input.txt -o output.txt
+
+Source: http://www.localizingjapan.com/blog/2012/07/16/japanese-encoding-conversion/
