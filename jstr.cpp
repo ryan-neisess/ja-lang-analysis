@@ -29,17 +29,22 @@ public:
     jstr & operator =(const string & src);
     jstr & operator =(const jstr & src);
 
+    string & operator [](int index) { return arr[index]; }
+
+    jstr & operator +=(const string & to_add);
+    jstr & operator +=(const jstr & to_add);
+
     void print(ostream & out);
     void print(ofstream & out);
 
-    int size() { return this->size; }
-    int len() { return this->size; }
-    int capacity() { return this->capacity; }
+    int size() { return _size; }
+    int len() { return _size; }
+    int capacity() { return _capacity; }
 
 private:
     string * arr; // pointer for dynamically allocated string
-    int size; // number of jchars 
-    int capacity; // size of dynamically allocated array
+    int _size; // number of jchars 
+    int _capacity; // size of dynamically allocated array
 
     string * allocate_jstr(int new_cap);
 
@@ -55,7 +60,7 @@ ofstream & operator <<(ofstream & lhs, jstr & rhs);
 // Default constructor accepting a std::string
 // capacity will be the size of the dynamically allocated array of std::strings
 jstr::jstr(const string & src = "", const int cap = 64) {
-    capacity = cap;
+    _capacity = cap;
     arr = nullptr;
     *this = src;
 }
@@ -69,15 +74,15 @@ jstr & jstr::operator =(const string & src) {
     if (arr != nullptr) {
         delete[] arr;
         arr = nullptr;
-        size = 0;
+        _size = 0;
         // Note: capacity can be set by the constructor, so don't set to zero
     }
 
     // The higher of the current capacity and the src's size + 1 will be used
-    if (capacity < src.size() + 1) {
-        capacity = src.size() + 1;
+    if (_capacity < src.size() + 1) {
+        _capacity = src.size() + 1;
     }
-    if (!allocate_jstr(capacity)) {
+    if (!allocate_jstr(_capacity)) {
         return *this;
     }
 
@@ -97,22 +102,22 @@ jstr & jstr::operator =(const string & src) {
             temp.push_back(src[i++]);
         }
 
-        arr[size++] = temp;
+        arr[_size++] = temp;
 
-        if (size == capacity - 1) { // resize the jstr as needed
-            capacity *= 2;
+        if (_size == _capacity - 1) { // resize the jstr as needed
+            _capacity *= 2;
             string * pTemp = arr;
-            if (!allocate_jstr(capacity)) {
+            if (!allocate_jstr(_capacity)) {
                 return *this;
             }
-            for (int j = 0; j <= size; j++) {
+            for (int j = 0; j <= _size; j++) {
                 arr[j] = pTemp[j];
             }
             delete[] pTemp;
         }
     }
 
-    arr[size] = ""; // null-character equivalent for jstr
+    arr[_size] = ""; // null-character equivalent for jstr
 
     return *this;
 }
@@ -121,30 +126,41 @@ jstr & jstr::operator =(const jstr & src) {
     if (arr != nullptr) {
         delete[] arr;
         arr = nullptr;
-        capacity = 0;
-        size = 0;
+        _capacity = 0;
+        _size = 0;
     }
 
-    if (!allocate_jstr(src.capacity)) {
+    if (!allocate_jstr(src._capacity)) {
         return *this;
     }
 
-    for ( ; src.arr[size] != ""; size++) {
-        arr[size] = src.arr[size];
+    for ( ; src.arr[_size] != ""; _size++) {
+        arr[_size] = src.arr[_size];
     }
-    arr[size] = "";
+    arr[_size] = "";
 
     return *this;
 }
 
+// In development
+jstr & jstr::operator +=(const string & to_add) {
+
+}
+
+// In development
+jstr & jstr::operator +=(const jstr & to_add) {
+
+}
+
+
 void jstr::print(ostream & out) {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < _size; i++) {
         out << arr[i];
     }
 }
 
 void jstr::print(ofstream & out) {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < _size; i++) {
         out << arr[i];
     }
 }
@@ -156,7 +172,7 @@ string * jstr::allocate_jstr(int new_cap) {
             // will occur if program is linked with nothrownew.obj
             throw 0;
         }
-        capacity = new_cap;
+        _capacity = new_cap;
         return arr;
     }
     catch (std::bad_alloc & e) {
@@ -168,8 +184,8 @@ string * jstr::allocate_jstr(int new_cap) {
     }
 
     // Should only reach here if memory allocation unsuccessful
-    capacity = 0;
-    size = 0;
+    _capacity = 0;
+    _size = 0;
     return nullptr;
 }
 

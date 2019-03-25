@@ -77,11 +77,13 @@ int main(void) {
     cout << "\n\nsize: " << size << "\n\n";*/
 
     jstr test1 = temp;
-    cout << test1 << "\n\n";
+    //cout << test1 << "\n\n";
     jstr test2 = test1;
-    cout << test2 << "\n\n";
+    //cout << test2 << "\n\n";
     test2 = temp2;
-    cout << test2 << "\n\n";
+    //cout << test2 << "\n\n";
+
+    cout << test1[0] << test1[1] << test1[2] << test1[3] << test1[4] << test1[5] << "\n\n";
 
     // char16_t ctemp;
     // int i = 0;
