@@ -34,16 +34,19 @@ int main(void) {
     string temp, single, copy, temp2, line[256];
     
     getline(db_edict, temp);
-    
     cout << temp << endl << endl;
-    int x = 0;
-
     for (char glyph : temp) {
         cout << glyph;
-        x++;
     }
+    cout << "\n\n";
 
-    cout << "\n\nx: " << x << "\n\n";
+    getline(db_edict, temp2);
+    cout << temp2 << endl << endl;
+    for (char glyph : temp2) {
+        cout << glyph;
+    }
+    cout << "\n\n";
+
 
     /*int i = 0, size = 0;
 
@@ -74,12 +77,11 @@ int main(void) {
     cout << "\n\nsize: " << size << "\n\n";*/
 
     jstr test1 = temp;
-
-    for (int i = 0; i < test1.size; i++) {
-        cout << test1.arr[i];
-    }
-
-    cout << "\n\n";
+    cout << test1 << "\n\n";
+    jstr test2 = test1;
+    cout << test2 << "\n\n";
+    test2 = temp2;
+    cout << test2 << "\n\n";
 
     // char16_t ctemp;
     // int i = 0;
