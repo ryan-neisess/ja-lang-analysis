@@ -34,8 +34,20 @@ public:
     //   formatted string containing multiple human-readable characters
 };
 
-ostream & operator <<(ostream & lhs, jchar & rhs);
-ofstream & operator <<(ofstream & lhs, jchar & rhs);
+ostream & operator <<(ostream & lhs, const jchar & rhs);
+ofstream & operator <<(ofstream & lhs, const jchar & rhs);
+
+bool operator ==(const jchar & lhs, const char * & rhs);
+bool operator ==(const char * & lhs, const jchar & rhs);
+bool operator ==(const jchar & lhs, const string & rhs);
+bool operator ==(const string & lhs, const jchar & rhs);
+bool operator ==(const jchar & lhs, const jchar & rhs);
+
+bool operator !=(const jchar & lhs, const char * & rhs);
+bool operator !=(const char * & lhs, const jchar & rhs);
+bool operator !=(const jchar & lhs, const string & rhs);
+bool operator !=(const string & lhs, const jchar & rhs);
+bool operator !=(const jchar & lhs, const jchar & rhs);
 
 // Precondition: sym represents ONLY a SINGLE human-readable character in UTF-8
 jchar::jchar(const string & sym = "") {
@@ -57,14 +69,60 @@ jchar & jchar::operator =(const jchar & sym) {
     return *this;
 }
 
-ostream & operator <<(ostream & lhs, jchar & rhs) {
+ostream & operator <<(ostream & lhs, const jchar & rhs) {
     lhs << rhs.symbol;
     return lhs;
 }
 
-ofstream & operator <<(ofstream & lhs, jchar & rhs) {
+ofstream & operator <<(ofstream & lhs, const jchar & rhs) {
     lhs << rhs.symbol;
     return lhs;
+}
+
+// Boolean == operator overloads
+
+bool operator ==(const jchar & lhs, const char * & rhs) {
+    return lhs.symbol == rhs;
+}
+
+bool operator ==(const char * & lhs, const jchar & rhs) {
+    return lhs == rhs.symbol;
+}
+
+bool operator ==(const jchar & lhs, const string & rhs) {
+    return lhs.symbol == rhs;
+}
+
+bool operator ==(const string & lhs, const jchar & rhs) {
+    return lhs == rhs.symbol;
+}
+
+bool operator ==(const jchar & lhs, const jchar & rhs) {
+    return lhs.symbol == rhs.symbol;
+}
+
+// Boolean != operator overloads
+// return !(lhs == rhs); syntax not chosen in order to minimize function calls/
+//   stack frames
+
+bool operator !=(const jchar & lhs, const char * & rhs) {
+    return lhs.symbol != rhs;
+}
+
+bool operator !=(const char * & lhs, const jchar & rhs) {
+    return lhs != rhs.symbol;
+}
+
+bool operator !=(const jchar & lhs, const string & rhs) {
+    return lhs.symbol != rhs;
+}
+
+bool operator !=(const string & lhs, const jchar & rhs) {
+    return lhs != rhs.symbol;
+}
+
+bool operator !=(const jchar & lhs, const jchar & rhs) {
+    return lhs.symbol != rhs.symbol;
 }
 
 
@@ -78,36 +136,49 @@ public:
     jstr(const string & src, const int cap); // default constructor, see definition
     jstr(const jstr & src);
 
+    // Destructor, In Development
+    // Big-5, In Development
+
     jstr & operator =(const string & src);
     jstr & operator =(const jstr & src);
 
-    string & operator [](int index) { return arr[index]; }
+    jchar & operator [](int index) { return arr[index]; }
+    const jchar & operator [](int index) const { return arr[index]; }
 
+    jstr & operator +=(const jchar & to_add);
     jstr & operator +=(const string & to_add);
     jstr & operator +=(const jstr & to_add);
 
     void print(ostream & out);
     void print(ofstream & out);
 
-    int size() { return _size; }
-    int len() { return _size; }
-    int capacity() { return _capacity; }
+    int size() const { return _size; }
+    int len() const { return _size; }
+    int capacity() const { return _capacity; }
 
 private:
-    string * arr; // pointer for dynamically allocated string
+    jchar * arr; // pointer for dynamically allocated string of jchars
     int _size; // number of jchars 
     int _capacity; // size of dynamically allocated array
 
-    string * allocate_jstr(int new_cap);
-
-    // friend ostream & operator <<(ostream & lhs, jstr & rhs);
-    // friend ofstream & operator <<(ofstream & lhs, jstr & rhs);
+    jchar * allocate_jstr(int new_cap);
 };
 
 ostream & operator <<(ostream & lhs, jstr & rhs);
 ofstream & operator <<(ofstream & lhs, jstr & rhs);
 
-// * * * * * * * * * Member Function Definitions * * * * * * * * * //
+// == and != operators ***
+// In development
+
+// += operators
+// In development
+
+// + operators
+// In development
+
+
+
+// * * * * * * jstr public Member Function Definitions * * * * * * //
 
 // Default constructor accepting a std::string
 // capacity will be the size of the dynamically allocated array of std::strings
@@ -158,7 +229,7 @@ jstr & jstr::operator =(const string & src) {
 
         if (_size == _capacity - 1) { // resize the jstr as needed
             _capacity *= 2;
-            string * pTemp = arr;
+            jchar * pTemp = arr;
             if (!allocate_jstr(_capacity)) {
                 return *this;
             }
@@ -195,6 +266,11 @@ jstr & jstr::operator =(const jstr & src) {
 }
 
 // In development
+jstr & jstr::operator +=(const jchar & to_add) {
+
+}
+
+// In development
 jstr & jstr::operator +=(const string & to_add) {
 
 }
@@ -203,7 +279,6 @@ jstr & jstr::operator +=(const string & to_add) {
 jstr & jstr::operator +=(const jstr & to_add) {
 
 }
-
 
 void jstr::print(ostream & out) {
     for (int i = 0; i < _size; i++) {
@@ -217,9 +292,11 @@ void jstr::print(ofstream & out) {
     }
 }
 
-string * jstr::allocate_jstr(int new_cap) {
+// * * * * * * jstr private Member Function Definitions * * * * * * //
+
+jchar * jstr::allocate_jstr(const int new_cap) {
     try {
-        arr = new string[new_cap];
+        arr = new jchar[new_cap];
         if (arr == nullptr) {
             // will occur if program is linked with nothrownew.obj
             throw 0;
@@ -241,7 +318,7 @@ string * jstr::allocate_jstr(int new_cap) {
     return nullptr;
 }
 
-// * * * * * * * * * Non-Member Function Definitions * * * * * * * * * //
+// * * * * * * jstr Non-Member Function Definitions * * * * * * //
 
 ostream & operator <<(ostream & lhs, jstr & rhs) {
     rhs.print(lhs);
