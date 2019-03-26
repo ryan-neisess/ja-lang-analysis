@@ -12,10 +12,62 @@ using std::ofstream;
 // The jstr class allows the user to treat a Japanese character found in a 
 //   UTF-8 encoded string as a single entity, rather than a 3-byte segment 
 //   in a std::string that is only printable thanks to modern versions of 
-//   the C++ libraries and Linux.
+//   the C++ libraries/compilers and Linux.
 //
 // Conceptually, a jstr is a string where each character is a jchar, which 
 //   programatically is simply a std::string.
+
+class jchar {
+public:
+    jchar(const string & sym);
+    jchar(const jchar & sym);
+
+    jchar & operator =(const string & sym);
+    jchar & operator =(const jchar & sym);
+
+    string symbol;
+
+    // Note: symbol was decided to be public because the jchar class is 
+    //   effectively just a wrapper class for a string, providing the 
+    //   distinction and clarity however that said string is for representing 
+    //   a single human-readable character, as opposed to an entire UTF-8 
+    //   formatted string containing multiple human-readable characters
+};
+
+ostream & operator <<(ostream & lhs, jchar & rhs);
+ofstream & operator <<(ofstream & lhs, jchar & rhs);
+
+// Precondition: sym represents ONLY a SINGLE human-readable character in UTF-8
+jchar::jchar(const string & sym = "") {
+    symbol = sym;
+}
+
+jchar::jchar(const jchar & sym) {
+    *this = sym;
+}
+
+// Precondition: sym represents ONLY a SINGLE human-readable character in UTF-8
+jchar & jchar::operator =(const string & sym) {
+    symbol = sym;
+    return *this;
+}
+
+jchar & jchar::operator =(const jchar & sym) {
+    symbol = sym.symbol;
+    return *this;
+}
+
+ostream & operator <<(ostream & lhs, jchar & rhs) {
+    lhs << rhs.symbol;
+    return lhs;
+}
+
+ofstream & operator <<(ofstream & lhs, jchar & rhs) {
+    lhs << rhs.symbol;
+    return lhs;
+}
+
+
 
 class jstr {
 public:
