@@ -9,13 +9,19 @@ using std::ofstream;
 
 //    Notes (Simplified)
 //
-// The jstr class allows the user to treat a Japanese character found in a 
-//   UTF-8 encoded string as a single entity, rather than a 3-byte segment 
-//   in a std::string that is only printable thanks to modern versions of 
-//   the C++ libraries/compilers and Linux.
+// The jstr class is a logical string class where every character in a jstr 
+//   is of type jchar. The jstr class allows a UTF-8 formatted Unicode string 
+//   to be stored and manipulated in such a way that each human-readable 
+//   character can also be treated programatically as a single jchar.
 //
-// Conceptually, a jstr is a string where each character is a jchar, which 
-//   programatically is simply a std::string.
+// The jstr class was created due to limitations in working with Unicode 
+//   characters, namely that UTF-8 encoding does not enforce fixed-width 
+//   characters, likely in an effort to save space (e.g. Latin and similar 
+//   characters are 1 byte, while Japanese and similar characters are 3 bytes).
+//
+// Currently, the jstr class is compatible only with modern versions of C++/ 
+//   C++ compilers in a Linux environment, due to the internal methods in the 
+//   std::string class that allow for printing of UTF-8 encoded characters.
 
 class jchar {
 public:
@@ -137,7 +143,8 @@ public:
     jstr(const string & src, const int cap); // default constructor, see definition
     jstr(const jstr & src);
 
-    // Destructor, In Development
+    ~jstr();
+
     // Big-5, In Development
 
     jstr & operator =(const string & src);
@@ -152,6 +159,8 @@ public:
 
     void print(ostream & out) const;
     void print(ofstream & out) const;
+
+    void clear(int keep); // keep default is 1
 
     int size() const { return _size; }
     int len() const { return _size; }
@@ -168,16 +177,14 @@ private:
 ostream & operator <<(ostream & lhs, const jstr & rhs);
 //ofstream & operator <<(ofstream & lhs, const jstr & rhs);
 
-// == and != operators ***
-// In development
+jstr operator +(const jchar & lhs, const jstr & rhs);
+jstr operator +(const jstr & lhs, const jchar & rhs);
+jstr operator +(const string & lhs, const jstr & rhs);
+jstr operator +(const jstr & lhs, const string & rhs);
+jstr operator +(const jstr & lhs, const jstr & rhs);
 
-// += operators
-// In development
-
-// + operators
-// In development
-
-
+bool operator ==(const jstr & lhs, const jstr & rhs);
+bool operator !=(const jstr & lhs, const jstr & rhs);
 
 // * * * * * * jstr public Member Function Definitions * * * * * * //
 
@@ -195,6 +202,10 @@ jstr::jstr(const jstr & src) {
     _size = 0;
     arr = nullptr;
     *this = src;
+}
+
+jstr::~jstr() {
+    clear(0);
 }
 
 jstr & jstr::operator =(const string & src) {
@@ -271,7 +282,7 @@ jstr & jstr::operator =(const jstr & src) {
 
 jstr & jstr::operator +=(const jchar & to_add) {
     if (_capacity < _size + 2){ // extra +1 for new jchar
-        _capacity *= 2;
+        _capacity <<= 2;
 
         if (!allocate_jstr(_capacity)) {
             return *this;
@@ -293,7 +304,7 @@ jstr & jstr::operator +=(const jstr & to_add) {
 
     if (_capacity < size_needed) {
         do {
-            _capacity = _capacity << 2;
+            _capacity <<= 2;
         } while (_capacity < size_needed);
 
         if (!allocate_jstr(_capacity)) {
@@ -318,6 +329,21 @@ void jstr::print(ofstream & out) const {
     for (int i = 0; i < _size; i++) {
         out << arr[i];
     }
+}
+
+// If keep == 1, former capacity is retained and a logical clear/delete is 
+//   performed; if keep == 0, delete[] is called and capacity is set to 0
+void jstr::clear(int keep = 1) {
+    if (keep == 1) {
+        arr[0] = "";
+    }
+    else {
+        delete[] arr;
+        arr = nullptr;
+        _capacity = 0;
+    }
+
+    _size = 0;
 }
 
 // * * * * * * jstr private Member Function Definitions * * * * * * //
@@ -359,9 +385,60 @@ ostream & operator <<(ostream & lhs, const jstr & rhs) {
 //     return lhs;
 // }
 
+jstr operator +(const jchar & lhs, const jstr & rhs) {
+    jstr result(lhs.symbol);
+    result += rhs;
+    return result;
+}
+
+jstr operator +(const jstr & lhs, const jchar & rhs) {
+    jstr result(lhs);
+    result += rhs;
+    return result;
+}
+
+jstr operator +(const string & lhs, const jstr & rhs) {
+    jstr result(lhs);
+    result += rhs;
+    return result;
+}
+
+jstr operator +(const jstr & lhs, const string & rhs) {
+    jstr result(lhs);
+    result += rhs;
+    return result;
+}
+
+jstr operator +(const jstr & lhs, const jstr & rhs) {
+    jstr result(lhs);
+    result += rhs;
+    return result;
+}
+
+bool operator ==(const jstr & lhs, const jstr & rhs) {
+    //return jstrcmp(lhs, rhs) == 0; // maybe implement later
+
+    int i = 0;
+    for ( ; lhs[i] != "" && rhs[i] != ""; i++) { }
+    if (lhs[i] == rhs[i]) { return true; }
+    else { return false; }
+}
+
+bool operator !=(const jstr & lhs, const jstr & rhs) {
+    return !(lhs == rhs);
+}
+
+// Need to consider how to compare jchars
+// int jstrcmp(const jstr & jstr1, const jstr & jstr2) {
+//     for (int i = 0; jstr1[i] != "" || jstr2[i] != ""; i++) {
+//         if (jstr1[i] > jstr2[i]) return 1;
+//         else if (jstr1[i] < jstr1[i]) return -1;
+//     }
+// }
 
 
-//     Notes (Verbose)
+
+//     Notes (Verbose) - To Be Revised
 //
 // The jstr class is designed to provide a convenient way to work with UTF-8 
 //   encoded strings such that each human-readable character has an equivalent 

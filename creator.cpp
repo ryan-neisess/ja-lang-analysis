@@ -105,6 +105,30 @@ int main(void) {
 
     cout << test5 << "\n\n";
 
+    jstr test6;
+    jstr test7;
+    jstr test8;
+    jstr test9;
+    jstr test10;
+
+    test6 = test3 + test5;
+    test7 = test3 + "cat";
+    test8 = "cat" + test3;
+    test9 = test3 + "C";
+    test10 = "C" + test3;
+
+    cout << test6 << "\n";
+    cout << test7 << "\n";
+    cout << test8 << "\n";
+    cout << test9 << "\n";
+    cout << test10 << "\n";
+    cout << "\n";
+
+    jstr test11(test3);
+
+    cout << (test3 == test11) << endl;
+    cout << (test4 == test11) << "\n\n";
+
     // char16_t ctemp;
     // int i = 0;
     // temp2 = " ";
