@@ -85,6 +85,26 @@ int main(void) {
 
     cout << test1[0] << test1[1] << test1[2] << test1[3] << test1[4] << test1[5] << "\n\n";
 
+    jstr test3;
+    test3 += test1[0];
+    test3 += test1[1];
+    test3 += test1[2];
+    test3 += test1[3];
+    test3 += test1[4];
+    test3 += test1[5];
+
+    cout << test3 << "\n\n";
+
+    jstr test4(test3);
+    test4 += temp;
+
+    cout << test4 << "\n\n";
+
+    jstr test5(test3);
+    test5 += test3;
+
+    cout << test5 << "\n\n";
+
     // char16_t ctemp;
     // int i = 0;
     // temp2 = " ";
@@ -102,6 +122,9 @@ int main(void) {
     //     i++;
     // }
 
+    db_edict.close();
+    output.close();
+    output2.close();
     
     return 0;
 }

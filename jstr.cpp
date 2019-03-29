@@ -35,7 +35,7 @@ public:
 };
 
 ostream & operator <<(ostream & lhs, const jchar & rhs);
-ofstream & operator <<(ofstream & lhs, const jchar & rhs);
+//ofstream & operator <<(ofstream & lhs, const jchar & rhs);
 
 bool operator ==(const jchar & lhs, const char * & rhs);
 bool operator ==(const char * & lhs, const jchar & rhs);
@@ -74,10 +74,11 @@ ostream & operator <<(ostream & lhs, const jchar & rhs) {
     return lhs;
 }
 
-ofstream & operator <<(ofstream & lhs, const jchar & rhs) {
-    lhs << rhs.symbol;
-    return lhs;
-}
+// See notes for details
+// ofstream & operator <<(ofstream & lhs, const jchar & rhs) {
+//     lhs << rhs.symbol;
+//     return lhs;
+// }
 
 // Boolean == operator overloads
 
@@ -149,8 +150,8 @@ public:
     jstr & operator +=(const string & to_add);
     jstr & operator +=(const jstr & to_add);
 
-    void print(ostream & out);
-    void print(ofstream & out);
+    void print(ostream & out) const;
+    void print(ofstream & out) const;
 
     int size() const { return _size; }
     int len() const { return _size; }
@@ -164,8 +165,8 @@ private:
     jchar * allocate_jstr(int new_cap);
 };
 
-ostream & operator <<(ostream & lhs, jstr & rhs);
-ofstream & operator <<(ofstream & lhs, jstr & rhs);
+ostream & operator <<(ostream & lhs, const jstr & rhs);
+//ofstream & operator <<(ofstream & lhs, const jstr & rhs);
 
 // == and != operators ***
 // In development
@@ -184,11 +185,14 @@ ofstream & operator <<(ofstream & lhs, jstr & rhs);
 // capacity will be the size of the dynamically allocated array of std::strings
 jstr::jstr(const string & src = "", const int cap = 64) {
     _capacity = cap;
+    _size = 0;
     arr = nullptr;
     *this = src;
 }
 
 jstr::jstr(const jstr & src) {
+    _capacity = 0;
+    _size = 0;
     arr = nullptr;
     *this = src;
 }
@@ -265,28 +269,52 @@ jstr & jstr::operator =(const jstr & src) {
     return *this;
 }
 
-// In development
 jstr & jstr::operator +=(const jchar & to_add) {
+    if (_capacity < _size + 2){ // extra +1 for new jchar
+        _capacity *= 2;
 
+        if (!allocate_jstr(_capacity)) {
+            return *this;
+        }
+    }
+
+    arr[_size++] = to_add;
+    return *this;
 }
 
-// In development
 jstr & jstr::operator +=(const string & to_add) {
-
+    jstr converted(to_add);
+    *this += converted;
+    return *this;
 }
 
-// In development
 jstr & jstr::operator +=(const jstr & to_add) {
+    int size_needed = _size + 1 + to_add._size;
 
+    if (_capacity < size_needed) {
+        do {
+            _capacity = _capacity << 2;
+        } while (_capacity < size_needed);
+
+        if (!allocate_jstr(_capacity)) {
+            return *this;
+        }
+    }
+
+    for (int i = 0; i < to_add._size; i++) {
+        arr[_size++] = to_add.arr[i];
+    }
+    arr[_size++] = ""; // null-character equivalent
+    return *this;
 }
 
-void jstr::print(ostream & out) {
+void jstr::print(ostream & out) const {
     for (int i = 0; i < _size; i++) {
         out << arr[i];
     }
 }
 
-void jstr::print(ofstream & out) {
+void jstr::print(ofstream & out) const {
     for (int i = 0; i < _size; i++) {
         out << arr[i];
     }
@@ -320,15 +348,16 @@ jchar * jstr::allocate_jstr(const int new_cap) {
 
 // * * * * * * jstr Non-Member Function Definitions * * * * * * //
 
-ostream & operator <<(ostream & lhs, jstr & rhs) {
+ostream & operator <<(ostream & lhs, const jstr & rhs) {
     rhs.print(lhs);
     return lhs;
 }
 
-ofstream & operator <<(ofstream & lhs, jstr & rhs) {
-    rhs.print(lhs);
-    return lhs;
-}
+// See notes for details
+// ofstream & operator <<(ofstream & lhs, const jstr & rhs) {
+//     rhs.print(lhs);
+//     return lhs;
+// }
 
 
 
