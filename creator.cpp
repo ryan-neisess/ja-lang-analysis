@@ -12,6 +12,7 @@
 
 #include <cstring>
 
+//#include "jstr.h"
 #include "jstr.cpp"
 
 using std::cout;
