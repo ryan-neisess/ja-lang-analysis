@@ -294,29 +294,13 @@ jstr operator +(const jchar & lhs, const jstr & rhs) {
     return result;
 }
 
-// jstr operator +(const jstr & lhs, const jchar & rhs) {
-//     jstr result(lhs);
-//     result += rhs;
-//     return result;
-// }
+// See notes for why this was not templated
 
-// jstr operator +(const string & lhs, const jstr & rhs) {
-//     jstr result(lhs);
-//     result += rhs;
-//     return result;
-// }
-
-// jstr operator +(const jstr & lhs, const string & rhs) {
-//     jstr result(lhs);
-//     result += rhs;
-//     return result;
-// }
-
-// jstr operator +(const jstr & lhs, const jstr & rhs) {
-//     jstr result(lhs);
-//     result += rhs;
-//     return result;
-// }
+jstr operator +(const string & lhs, const jstr & rhs) {
+    jstr result(lhs);
+    result += rhs;
+    return result;
+}
 
 bool operator ==(const jstr & lhs, const jstr & rhs) {
     //return jstrcmp(lhs, rhs) == 0; // maybe implement later

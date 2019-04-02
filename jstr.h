@@ -110,6 +110,10 @@ public:
     jstr & operator +=(const string & to_add);
     jstr & operator +=(const jstr & to_add);
 
+    // Acceptable types for J include jstr, std::string, and jchar
+    template <typename J>
+    jstr & append(J & to_add) { return *this += to_add; }
+
     void print(ostream & out) const;
     void print(ofstream & out) const;
 
@@ -131,23 +135,19 @@ ostream & operator <<(ostream & lhs, const jstr & rhs);
 //ofstream & operator <<(ofstream & lhs, const jstr & rhs);
 
 jstr operator +(const jchar & lhs, const jstr & rhs);
+jstr operator +(const string & lhs, const jstr & rhs);
 
-template <typename L, typename R>
-jstr operator +(const L & lhs, const R & rhs);
-// jstr operator +(const jstr & lhs, const jchar & rhs);
-// jstr operator +(const string & lhs, const jstr & rhs);
-// jstr operator +(const jstr & lhs, const string & rhs);
-// jstr operator +(const jstr & lhs, const jstr & rhs);
+template <typename J>
+jstr operator +(const jstr & lhs, const J & rhs);
 
 bool operator ==(const jstr & lhs, const jstr & rhs);
 bool operator !=(const jstr & lhs, const jstr & rhs);
 
 // * * * * * * jstr Templated Function Definitions * * * * * * //
 
-// Acceptable types for L include jstr and std::string
-// Acceptable types for R include jstr, std::string, and jchar
-template <typename L, typename R>
-jstr operator +(const L & lhs, const R & rhs) {
+// Acceptable types for J include jstr, std::string, and jchar
+template <typename J>
+jstr operator +(const jstr & lhs, const J & rhs) {
     jstr result(lhs);
     result += rhs;
     return result;
