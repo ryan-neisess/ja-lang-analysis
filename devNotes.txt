@@ -1,0 +1,11 @@
+Oct 2020
+
+When last worked on 1-2 years ago, the jstr library was functional, but I
+    preferred to have some more documentation and support of auxilliary yet
+    useful function; I don't recall if I finished the functions, but
+    documentation was in progress at least.
+
+I've re-organized everything, databases in one folder, jstr itself in its own
+    folder, and creator.cpp was the originally the file I tested with. That's
+    been renamed to jstrDevTest.cpp, and an equivalent script was created to
+    run it. The new creator.cpp will have the language creation tools.
