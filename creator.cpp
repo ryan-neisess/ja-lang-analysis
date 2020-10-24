@@ -35,14 +35,14 @@ int main(void) {
     string temp, single, copy, temp2, line[256];
     
     getline(db_edict, temp);
-    cout << temp << endl << endl;
+    cout << temp << endl;
     for (char glyph : temp) {
         cout << glyph;
     }
     cout << "\n\n";
 
     getline(db_edict, temp2);
-    cout << temp2 << endl << endl;
+    cout << temp2 << endl;
     for (char glyph : temp2) {
         cout << glyph;
     }
